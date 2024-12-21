@@ -1,9 +1,11 @@
-
-#include "SDL.h"
-#include "gui.h"
-#include "SDL_ttf.h"
 #include <stdlib.h>
 #include <stdio.h>
+
+#include "SDL.h"
+#include "SDL_ttf.h"
+#include "SDL_image.h"
+
+#include "gui.h"
 
 
 #define WINDOW_W 820
@@ -26,6 +28,7 @@ int gui_init()
     // TTF_Init();
     font_srf = load_font("fonts/cw7x13.srf");
  
+    // IMG_Init(IMG_INIT_PNG);
     // font = TTF_OpenFont("fonts/courier_prime/CourierPrime-Regular.ttf", 14);
     // TTF_SizeText(font, "a", &font_w, &font_h);
     // font_big = TTF_OpenFont("fonts/courier_prime/CourierPrime-Regular.ttf", 32);

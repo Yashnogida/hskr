@@ -70,8 +70,14 @@ void wx_clef_initialize(widget_info *wx_info)
     SDL_SetTextureBlendMode(clef_blank_texture, SDL_BLENDMODE_BLEND);
     SetRenderDrawColor(COLOR_FOREGROUND);
     
+    // Clef Horizontal Lines
     for (int i=0; i<LINES_IN_CLEF; i++)
         SDL_RenderDrawLine(renderer, 0, (CLEF_LINE_SPACING*i), CLEF_WIDTH, (CLEF_LINE_SPACING*i));
+
+    // Clef Vertical Lines
+    SDL_RenderDrawLine(renderer, 0, 0, 0, (CLEF_HEIGHT - CLEF_LINE_SPACING));
+    SDL_RenderDrawLine(renderer, CLEF_WIDTH/2, 0, CLEF_WIDTH/2, (CLEF_HEIGHT - CLEF_LINE_SPACING));
+    SDL_RenderDrawLine(renderer, (CLEF_WIDTH - 1), 0, (CLEF_WIDTH - 1), (CLEF_HEIGHT - CLEF_LINE_SPACING));
 
     SDL_SetRenderTarget(renderer, NULL);
 
@@ -85,6 +91,9 @@ void wx_clef_draw(widget_info *wx_info)
     wx_draw_frame(wx_info, COLOR_FOREGROUND, COLOR_BACKGROUND);
     wx_clef_draw_blank_clefs(wx_info);
     // wx_clef_draw_notes(wx_info);
+    // SDL_Surface* lettuce_sur = IMG_Load("lettuce.png");
+    // SDL_Texture* lettuce_tex = SDL_CreateTextureFromSurface(renderer, lettuce_sur);
+
 
 
 }

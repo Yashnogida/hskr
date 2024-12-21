@@ -74,7 +74,8 @@
         "xtr1common": "cpp",
         "xtree": "cpp",
         "xutility": "cpp",
-        "sdl_ttf.h": "c"
+        "sdl_ttf.h": "c",
+        "sdl_image.h": "c"
     },
     "accessibility.signals.lineHasError": {
         "sound": "off",

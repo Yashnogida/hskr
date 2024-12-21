@@ -210,6 +210,14 @@ void wx_fx_command_key_pressed(widget_info *wx_info)
     
             else if (key_char == SDLK_ESCAPE)
                 clear_command_buffer();
+            
+            else if (key_char == SDLK_BACKSPACE)
+            {
+                printf("a");
+                command_buffer[command_buffer_index--] = '\0';
+            }
+                
+
 
         }
          
