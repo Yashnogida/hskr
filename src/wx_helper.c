@@ -12,9 +12,9 @@ void wx_draw_frame(widget_info *wx, int border_color, int fill_color)
     bg_rect.w = wx->rect.w + 2;
     bg_rect.h = wx->rect.h + 2;
     
-    SDL_SetRenderDrawColor(renderer, (border_color>>16) & 0xff, (border_color>>8) & 0xff, border_color & 0xff, SDL_ALPHA_OPAQUE);
+    SetRenderDrawColor(border_color);
     SDL_RenderFillRect(renderer, &bg_rect);
-    SDL_SetRenderDrawColor(renderer, (fill_color>>16) & 0xff, (fill_color>>8) & 0xff, fill_color & 0xff, SDL_ALPHA_OPAQUE);
+    SetRenderDrawColor(fill_color);
     SDL_RenderFillRect(renderer, &wx->rect);
 
 }

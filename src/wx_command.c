@@ -23,7 +23,7 @@ enum MEM_FIELD_ENUM
 };
 
 char message[80];
-
+int message_color;
 
 void wx_command_draw(widget_info *data);
 void wx_fx_mouse_button_down_command(widget_info *wx_info);
@@ -31,6 +31,10 @@ void wx_fx_command_mouse_wheel(widget_info *wx_info);
 void wx_fx_command_key_pressed(widget_info *wx_info);
 
 void wx_command_initialize(widget_info *wx_info);
+
+int check_valid_drum(char key_char);
+void set_message(char *str, int color);
+void clear_command_buffer();
 
 #define MAX_COMMAND_BUFFER_SIZE 4
 
@@ -117,7 +121,7 @@ void wx_command_draw(widget_info *wx_info)
     msg_x = wx_x(wx_info) + wx_w(wx_info) + 15;
     msg_y = wx_y(wx_info) + Y_PAD;
     
-    write_text(message, msg_x, msg_y, COLOR_FOREGROUND);
+    write_text(message, msg_x, msg_y, message_color);
     
 
 }
@@ -138,44 +142,47 @@ void wx_fx_mouse_button_down_command(widget_info *wx_info)
 void wx_fx_command_process_buffer(widget_info *wx_info)
 {
     char drum = command_buffer[0];
+    printf("%x\n", drum);
 
     switch(drum)
     {
         
         case 'H':
-            strcpy(message, "Hi-Hatt added (1/4)");
+            set_message("Hi-Hatt added (1/8)", COLOR_FOREGROUND);
             break;
 
         case 'S':
-            strcpy(message, "Snare added (1/4)");
+            set_message("Snare added (1/8)", COLOR_FOREGROUND);
             break;
 
         case 'K':
-            strcpy(message, "Kick added (1/4)");
+            set_message("Kick added (1/8)", COLOR_FOREGROUND);
             break;
 
         case 'R':
-            strcpy(message, "Ride added (1/4)");
+            set_message("Ride added (1/8)", COLOR_FOREGROUND);
             break;
 
         case 'T':
-            strcpy(message, "Rack Tom added (1/4)");
+            set_message("Rack Tom added (1/8)", COLOR_FOREGROUND);
             break;
         
         case 'F':
-            strcpy(message, "Floor Tom added (1/4)");
+            set_message("Floor Tom added (1/8)", COLOR_FOREGROUND);
             break;
         
         case 'P':
-            strcpy(message, "Rest added (1/4)");
+            set_message("Rest added (1/8)", COLOR_FOREGROUND);
             break;
-
+        
+        default:
+            set_message("Invalid Command", COLOR_TERTIARY);
+            break;
+            
     }
     
-    for (int i=0; i<MAX_COMMAND_BUFFER_SIZE; i++)
-        command_buffer[i] = '\0';
+    clear_command_buffer();
 
-    command_buffer_index = 0;
 }
 
 void wx_fx_command_key_pressed(widget_info *wx_info)
@@ -183,31 +190,30 @@ void wx_fx_command_key_pressed(widget_info *wx_info)
 
     if (gui_key_down_pending)
     {
-        printf("key down: %c\n", key_char);
+        // printf("key down: %c\n", key_char);
         
         key_is_pressed = true;
         
-        if ((key_char >= 'a') && (command_buffer_index == 0))
-            key_char = toupper(key_char);
-
-        if (command_buffer_index < (MAX_COMMAND_BUFFER_SIZE))
-            command_buffer[command_buffer_index++] = key_char;
-
-        if (key_char == SDLK_RETURN)
-            wx_fx_command_process_buffer(wx_info);
-
-        else if (key_char == SDLK_ESCAPE)
+        if ((command_buffer_index == 0))
         {
-            command_buffer_index = 0;
-            for (int i=0; i<MAX_COMMAND_BUFFER_SIZE; i++)
-                command_buffer[i] = '\0';
+            key_char = toupper(key_char);
+            if (isalpha(key_char) && check_valid_drum(key_char))
+                command_buffer[command_buffer_index++] = key_char;
+        }
+        else
+        {
+            if (command_buffer_index < (MAX_COMMAND_BUFFER_SIZE))
+                command_buffer[command_buffer_index++] = key_char;
+    
+            if (key_char == SDLK_RETURN)
+                wx_fx_command_process_buffer(wx_info);
+    
+            else if (key_char == SDLK_ESCAPE)
+                clear_command_buffer();
 
         }
          
     }
-
-
-
 
     if (gui_key_up_pending)
     {
@@ -217,4 +223,54 @@ void wx_fx_command_key_pressed(widget_info *wx_info)
 
 }
 
+
+
+// Utility Functions
+
+int check_valid_drum(char key_char)
+{
+    switch(key_char)
+    {
+         case 'H':
+            return 1;
+
+        case 'S':
+            return 1;
+
+        case 'K':
+            return 1;
+
+        case 'R':
+            return 1;
+
+        case 'T':
+            return 1;
+
+        case 'F':
+            return 1;
+
+        case 'P':
+            return 1;
+        
+        default:
+            return 0;
+
+    }
+   
+}
+
+void clear_command_buffer()
+{
+    for (int i=0; i<MAX_COMMAND_BUFFER_SIZE; i++)
+        command_buffer[i] = '\0';
+
+    command_buffer_index = 0;
+
+}
+
+void set_message(char *str, int color)
+{
+    message_color = color;
+    strcpy(message, str);
+}
 
