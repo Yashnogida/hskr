@@ -4,12 +4,17 @@
 #include "gui.h"
 #include "SDL.h"
 
-#define CLEF_W 800
-#define CLEF_H 900
-#define X_PAD 10
-#define Y_PAD 10
+#define CLEF_WINDOW_W 800
+#define CLEF_WINDOW_H 900
 
+#define LINES_IN_CLEF 5
 #define CLEF_LINE_SPACING 10
+#define CLEF_TO_CLEF_SPACING 100
+#define CLEF_MARGIN 10
+
+#define CLEF_WIDTH (CLEF_WINDOW_W - 2*CLEF_MARGIN)
+#define CLEF_HEIGHT (LINES_IN_CLEF * CLEF_LINE_SPACING)
+
 
 enum MEM_FIELD_ENUM
 {
@@ -20,11 +25,11 @@ enum MEM_FIELD_ENUM
 
 
 void wx_clef_draw(widget_info *data);
+void wx_clef_initialize(widget_info *wx_info);
 void wx_fx_mouse_button_down_clef(widget_info *wx_info);
 void wx_fx_clef_mouse_wheel(widget_info *wx_info);
 
-#define channel_selected(wx_info, channel) ((widget_info*)wx_info->heap + channel)->selected
-#define channel_color(wx_info, channel) *(((uint32_t*)(wx_info->heap[MEM_F1])) + channel)
+SDL_Texture *clef_blank_texture;
 
 
 widget wx_clef_create(int x, int y)
@@ -40,13 +45,34 @@ widget wx_clef_create(int x, int y)
     clef.fx.fx_draw = wx_clef_draw;
     clef.fx.fx_mouse_motion = wx_check_bounds;
     clef.fx.fx_mouse_wheel = wx_fx_clef_mouse_wheel;
-    clef.fx.fx_keypressed = wx_fx_none;
+    clef.fx.fx_key_pressed = wx_fx_none;
     clef.fx.fx_mouse_button_down = wx_fx_mouse_button_down_clef;
+
+    wx_clef_initialize(&clef);
     
     return clef; 
 
 }
 
+void wx_clef_initialize(widget_info *wx_info)
+{
+
+    clef_blank_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, CLEF_WIDTH, CLEF_HEIGHT);
+
+
+    SDL_SetRenderTarget(renderer, clef_blank_texture);
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+    SDL_RenderClear(renderer);
+    SDL_SetTextureBlendMode(clef_blank_texture, SDL_BLENDMODE_BLEND);
+    SetRenderDrawColor(COLOR_FOREGROUND);
+    
+    for (int i=0; i<LINES_IN_CLEF; i++)
+        SDL_RenderDrawLine(renderer, 0, (CLEF_LINE_SPACING*i), CLEF_WIDTH, (CLEF_LINE_SPACING*i));
+
+    SDL_SetRenderTarget(renderer, NULL);
+
+    
+}
 
 
 void wx_clef_draw(widget_info *wx_info)
@@ -67,8 +93,8 @@ void wx_clef_draw(widget_info *wx_info)
     // clef Rectangle
     clef_fg_rect.x = wx_info->rect.x;
     clef_fg_rect.y = wx_info->rect.y;
-    clef_fg_rect.w = CLEF_W;
-    clef_fg_rect.h = CLEF_H;
+    clef_fg_rect.w = CLEF_WINDOW_W;
+    clef_fg_rect.h = CLEF_WINDOW_H;
 
     clef_bg_rect.x = clef_fg_rect.x - 1;
     clef_bg_rect.y = clef_fg_rect.y - 1;
@@ -81,17 +107,26 @@ void wx_clef_draw(widget_info *wx_info)
     if ( wx_check_bounds(&temp_wx_info) )
         border_color = COLOR_BACKGROUND;
 
-    clef_x1 = wx_x(wx_info) + X_PAD;
-    clef_x2 = CLEF_W - X_PAD;
+    // clef_x1 = wx_x(wx_info) + X_PAD;
+    // clef_x2 = CLEF_WINDOW_W - X_PAD;
 
     SDL_SetRenderDrawColor(renderer, red_mask(COLOR_FOREGROUND), green_mask(COLOR_FOREGROUND), blue_mask(COLOR_FOREGROUND), SDL_ALPHA_OPAQUE);
     SDL_RenderDrawRect(renderer, &clef_bg_rect);
-    
-    for (int i=0; i<5; i++)
-        SDL_RenderDrawLine(renderer, clef_x1, 100 + (CLEF_LINE_SPACING*i), clef_x2, 100 + (CLEF_LINE_SPACING*i));
 
     write_text("R", clef_x1 + 100, 1050, 0xFF0000);
+    
+    SDL_Rect dest_rect;
 
+    for (int i=0; i<8; i++)
+    {
+        
+        dest_rect.x = clef_fg_rect.x + CLEF_MARGIN;
+        dest_rect.y = CLEF_TO_CLEF_SPACING + (i*CLEF_TO_CLEF_SPACING);
+        dest_rect.w = CLEF_WIDTH;
+        dest_rect.h = CLEF_HEIGHT;
+        
+        SDL_RenderCopy(renderer, clef_blank_texture, NULL, &dest_rect);
+    }
 
 }
 

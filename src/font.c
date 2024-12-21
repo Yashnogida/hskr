@@ -114,7 +114,6 @@ void write_text(char *s, int x, int y, int fgc)
   SDL_Rect r, sr, dr;
   
   FONT *font = font_srf;
-
   
   SDL_SetRenderTarget(renderer, NULL);
   SDL_SetTextureColorMod(font->bm, red_mask(fgc), blue_mask(fgc), green_mask(fgc));

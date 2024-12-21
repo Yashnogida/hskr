@@ -62,7 +62,8 @@ int gui_update()
     widget *wx;
     
     gui_mouse_wheel_pending = false;
-    gui_key_press_pending = false;
+    gui_key_down_pending = false;
+    gui_key_up_pending = false;
     
     if (SDL_PollEvent(&event))
     {
@@ -71,8 +72,8 @@ int gui_update()
         {
 
             case SDL_MOUSEMOTION:
-                mouse_x = event.button.x;
-                mouse_y = event.button.y;
+                mouse_x = event.motion.x;
+                mouse_y = event.motion.y;
                 break;
 
             case SDL_MOUSEWHEEL:
@@ -81,9 +82,14 @@ int gui_update()
                 break;
 
             case SDL_KEYDOWN:
-                gui_key_press_pending = true;
+                gui_key_down_pending = true;
                 key_char = event.key.keysym.sym;
                 key_mod = event.key.keysym.mod;
+                break;
+
+            case SDL_KEYUP:
+                gui_key_up_pending = true;
+                break;
 
                 if (key_mod & KMOD_CTRL)  // Ctl-Q: quit 
                     if (key_char == 'q')
@@ -93,24 +99,15 @@ int gui_update()
     }
 
     // Clear the screen every time. Painful but safe.
-    SDL_SetRenderDrawColor(renderer, red_mask(COLOR_BACKGROUND), green_mask(COLOR_BACKGROUND), blue_mask(COLOR_BACKGROUND), SDL_ALPHA_OPAQUE);
-
+    SetRenderDrawColor(COLOR_BACKGROUND);
     SDL_RenderClear(renderer);
 
-    // Print Mouse Coordinates
-    char mouse_coord[80];
-    int w, h;
-    sprintf(mouse_coord, "%5d %5d %5d %5d", mouse_x, mouse_y, wx_mouse_x, wx_mouse_y);
-    SDL_GetWindowSize(window, &w, &h);
-    
-    // gui_write_text(mouse_coord, 0, , COLOR_BACKGROUND);
-    // gui_write_text(5, (WINDOW_H - font_h - 5), NULL, NULL, mouse_coord, COLOR_FOREGROUND);
     for (int i=0; i<widget_queue_size; i++)
     {
         wx = &widget_queue[i];
 
-        wx->fx.fx_update(&wx->data);
         wx->fx.fx_draw(&wx->data);
+        wx->fx.fx_update(&wx->data);
         wx->fx.fx_mouse_motion(&wx->data);
         wx->fx.fx_mouse_wheel(&wx->data);
         wx->fx.fx_mouse_button_down(&wx->data);

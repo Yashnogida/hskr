@@ -1,6 +1,6 @@
-#include <stdbool.h>
 #include "SDL.h"
 #include "SDL_ttf.h"
+#include <stdbool.h>
 
 
 // Colors
@@ -20,9 +20,13 @@
 #define wx_w(wx_info) wx_info->rect.w
 #define wx_h(wx_info) wx_info->rect.h
 
+#define SetRenderDrawColor(color) SDL_SetRenderDrawColor(renderer, (((color & 0xff0000) >> 16) & 0xff), (((color & 0x00ff00) >> 8) & 0xff), (((color & 0x0000ff) >> 0) & 0xff), SDL_ALPHA_OPAQUE)
+
 //
 bool gui_mouse_wheel_pending;
-bool gui_key_press_pending;
+bool gui_key_down_pending;
+bool gui_key_up_pending;
+
 int gui_mouse_wheel_direction;
 int key_char, key_mod;
 
