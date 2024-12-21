@@ -12,7 +12,6 @@ void wx_draw_frame(widget_info *wx, int border_color, int fill_color)
     bg_rect.w = wx->rect.w + 2;
     bg_rect.h = wx->rect.h + 2;
     
-    if (wx->selected | wx_check_bounds(wx)) border_color = COLOR_SECONDARY;
     SDL_SetRenderDrawColor(renderer, (border_color>>16) & 0xff, (border_color>>8) & 0xff, border_color & 0xff, SDL_ALPHA_OPAQUE);
     SDL_RenderFillRect(renderer, &bg_rect);
     SDL_SetRenderDrawColor(renderer, (fill_color>>16) & 0xff, (fill_color>>8) & 0xff, fill_color & 0xff, SDL_ALPHA_OPAQUE);

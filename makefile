@@ -18,6 +18,7 @@ CC = gcc
 
 INCLUDE = -Iinclude/SDL2 \
           -Iinclude/SDL_ttf \
+          -Iinclude/SDL_image \
 		  -Iinclude \
 		#   -I"C:/Program Files (x86)/Windows Kits/10/Include/10.0.26100.0/um" \
 		#   -I"C:/Program Files (x86)/Windows Kits10/Include/10.0.26100.0/shared" \
@@ -26,10 +27,13 @@ INCLUDE = -Iinclude/SDL2 \
 CFLAGS += -ggdb $(INCLUDE)
 
 SDL_LIB = -L./lib/SDL2 \
+		  -L./lib/SDL_ttf \
+		  -L./lib/SDL2_image \
           -lSDL2main \
 		  -lSDL2 \
-		  -L./lib/SDL_ttf \
-		  -lSDL2_ttf 
+		  -lSDL2_ttf \
+		  -lSDL2_image 
+
         #   -l"C:/Program Files (x86)/Windows Kits/10/Lib/10.0.26100.0/um/x64/dwmapi"
 
 LIBS += -lmingw32 -lws2_32 $(SDL_LIB) ./lib/plxapi.lib ./lib/sicl32.lib
