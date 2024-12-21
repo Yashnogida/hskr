@@ -88,7 +88,8 @@ void wx_clef_initialize(widget_info *wx_info)
 void wx_clef_draw(widget_info *wx_info)
 {
 
-    wx_draw_frame(wx_info, COLOR_FOREGROUND, COLOR_BACKGROUND);
+    // wx_draw_frame(wx_info, COLOR_FOREGROUND, COLOR_BACKGROUND);
+    wx_draw_frame(wx_info, COLOR_FOREGROUND, 0xFFFFFF);
     wx_clef_draw_blank_clefs(wx_info);
     // wx_clef_draw_notes(wx_info);
     // SDL_Surface* lettuce_sur = IMG_Load("lettuce.png");

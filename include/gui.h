@@ -10,6 +10,7 @@
 #define COLOR_SECONDARY    0x34D1BF
 #define COLOR_TERTIARY     0xD1345B
 
+#define COLOR_WHITE        0xFFFFFF
 
 #define red_mask(color)   (color >> 16) & 0xff
 #define green_mask(color) (color >> 8)  & 0xff

@@ -85,42 +85,16 @@ void wx_command_initialize(widget_info *wx_info)
 void wx_command_draw(widget_info *wx_info)
 {
 
-    SDL_Rect command_bg_rect, command_fg_rect;
+    const int msg_x = wx_x(wx_info) + wx_w(wx_info) + 15;
+    const int msg_y = wx_y(wx_info) + Y_PAD;
 
-    int msg_x, msg_y; 
-
-    command_fg_rect.x = wx_info->rect.x;
-    command_fg_rect.y = wx_info->rect.y;
-    command_fg_rect.w = COMMAND_W;
-    command_fg_rect.h = COMMAND_H;
-
-    command_bg_rect.x = command_fg_rect.x - 1;
-    command_bg_rect.y = command_fg_rect.y - 1;
-    command_bg_rect.w = command_fg_rect.w + 2;
-    command_bg_rect.h = command_fg_rect.h + 2;
-
-
-    SetRenderDrawColor(COLOR_FOREGROUND);
-
-    SDL_RenderDrawRect(renderer, &command_bg_rect);
-    
-    SetRenderDrawColor(COLOR_BACKGROUND);
+    wx_draw_frame(wx_info, COLOR_FOREGROUND, COLOR_WHITE);
 
     if (key_is_pressed)
-    {
-        if (command_buffer_index == MAX_COMMAND_BUFFER_SIZE)
-            SetRenderDrawColor(COLOR_TERTIARY);
-        else
-            SetRenderDrawColor(COLOR_SECONDARY);
-    }
-
-    SDL_RenderFillRect(renderer, &command_fg_rect);
+            wx_draw_frame(wx_info, COLOR_FOREGROUND, COLOR_SECONDARY);
 
     write_text(command_buffer, wx_x(wx_info) + X_PAD, wx_y(wx_info) + Y_PAD, COLOR_FOREGROUND);
-    
-    msg_x = wx_x(wx_info) + wx_w(wx_info) + 15;
-    msg_y = wx_y(wx_info) + Y_PAD;
-    
+        
     write_text(message, msg_x, msg_y, message_color);
     
 
@@ -193,35 +167,43 @@ void wx_fx_command_key_pressed(widget_info *wx_info)
         // printf("key down: %c\n", key_char);
         
         key_is_pressed = true;
+
+        key_char = toupper(key_char);
         
         if ((command_buffer_index == 0))
         {
-            key_char = toupper(key_char);
+            set_message("", COLOR_FOREGROUND);
+
+
             if (isalpha(key_char) && check_valid_drum(key_char))
-                command_buffer[command_buffer_index++] = key_char;
+                command_buffer[command_buffer_index] = key_char;
+
+            else
+                set_message("First entry must be H, S, K, R, T, F, P", COLOR_FOREGROUND);
         }
-        else
+
+        else if (command_buffer_index == 1)
         {
-            if (command_buffer_index < (MAX_COMMAND_BUFFER_SIZE))
-                command_buffer[command_buffer_index++] = key_char;
-    
-            if (key_char == SDLK_RETURN)
-                wx_fx_command_process_buffer(wx_info);
-    
-            else if (key_char == SDLK_ESCAPE)
-                clear_command_buffer();
-            
-            else if (key_char == SDLK_BACKSPACE)
-            {
-                printf("a");
-                command_buffer[command_buffer_index--] = '\0';
-            }
-                
-
-
         }
+    
+        if (command_buffer_index < (MAX_COMMAND_BUFFER_SIZE))
+            command_buffer[command_buffer_index++] = key_char;
          
+
+        if (key_char == SDLK_ESCAPE)
+            clear_command_buffer();
+        
+        if (key_char == SDLK_BACKSPACE)
+        {
+            command_buffer[command_buffer_index] = '\0';
+            command_buffer_index -= 1;
+        }
+
+        if (key_char == SDLK_RETURN)
+            wx_fx_command_process_buffer(wx_info);
     }
+            
+
 
     if (gui_key_up_pending)
     {
